@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Data Fetcher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #data-container {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>API Data Fetcher</h1>
+  <button id="fetch-data-btn">Fetch Data</button>
+  <div id="data-container"></div>
+
+  <script>
+    // Function to fetch data from the API
+    async function fetchData() {
+      const apiURL = 'https://jsonplaceholder.typicode.com/posts'; // Replace with your API URL
+      const dataContainer = document.getElementById('data-container');
+      dataContainer.innerHTML = 'Loading...';
+
+      try {
+        const response = await fetch(apiURL);
+
+        // Check if response is not ok
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        displayData(data);
+      } catch (error) {
+        displayError(error.message);
+      }
+    }
+
+    // Function to display data in the UI
+    function displayData(data) {
+      const dataContainer = document.getElementById('data-container');
+      dataContainer.innerHTML = '<h2>Data Retrieved:</h2>';
+      const list = document.createElement('ul');
+
+      data.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `ID: ${item.id}, Title: ${item.title}`;
+        list.appendChild(listItem);
+      });
+
+      dataContainer.appendChild(list);
+    }
+
+    // Function to display an error in the UI
+    function displayError(errorMessage) {
+      const dataContainer = document.getElementById('data-container');
+      dataContainer.innerHTML = `<p class="error">${errorMessage}</p>`;
+    }
+
+    // Add event listener to the button
+    document.getElementById('fetch-data-btn').addEventListener('click', fetchData);
+  </script>
+</body>
+</html>
