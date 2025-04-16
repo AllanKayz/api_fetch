@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Data Fetcher</title>
+  <title>Dynamic API Fetcher</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,22 +18,41 @@
     .error {
       color: red;
     }
+    .input-group {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
-  <h1>API Data Fetcher</h1>
+  <h1>Dynamic API Fetcher</h1>
+  <div class="input-group">
+    <label for="api-url">Enter API URL:</label>
+    <input type="text" id="api-url" placeholder="https://api.example.com/data" style="width: 100%; padding: 8px;">
+  </div>
   <button id="fetch-data-btn">Fetch Data</button>
   <div id="data-container"></div>
 
   <script>
     // Function to fetch data from the API
     async function fetchData() {
-      const apiURL =  'https://alkayzapi.rf.gd/public/api/articles'; // Replace with your API URL
+      const apiUrlInput = document.getElementById('api-url');
+      const apiUrl = apiUrlInput.value.trim();
       const dataContainer = document.getElementById('data-container');
+
+      // Clear previous results
+      dataContainer.innerHTML = '';
+
+      // Check if URL is provided
+      if (!apiUrl) {
+        dataContainer.innerHTML = '<p class="error">Please enter a valid API URL.</p>';
+        return;
+      }
+
+      // Display loading message
       dataContainer.innerHTML = 'Loading...';
 
       try {
-        const response = await fetch(apiURL);
+        const response = await fetch(apiUrl);
 
         // Check if response is not ok
         if (!response.ok) {
@@ -51,15 +70,19 @@
     function displayData(data) {
       const dataContainer = document.getElementById('data-container');
       dataContainer.innerHTML = '<h2>Data Retrieved:</h2>';
-      const list = document.createElement('ul');
 
-      data.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `ID: ${item.id}, Title: ${item.title}`;
-        list.appendChild(listItem);
-      });
-
-      dataContainer.appendChild(list);
+      // Handle different types of data (array, object, etc.)
+      if (Array.isArray(data)) {
+        const list = document.createElement('ul');
+        data.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.textContent = JSON.stringify(item, null, 2); // Format JSON for readability
+          list.appendChild(listItem);
+        });
+        dataContainer.appendChild(list);
+      } else {
+        dataContainer.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      }
     }
 
     // Function to display an error in the UI
