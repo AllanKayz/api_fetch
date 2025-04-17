@@ -14,12 +14,18 @@
       padding: 10px;
       border: 1px solid #ddd;
       background-color: #f9f9f9;
+      overflow: auto; /* Add overflow for scrollable content */
+      max-height: 400px; /* Optional: Limit the height for better usability */
     }
     .error {
       color: red;
     }
     .input-group {
       margin-bottom: 10px;
+    }
+    pre {
+      white-space: pre-wrap; /* Ensure long lines wrap properly */
+      word-wrap: break-word; /* Prevent horizontal scrolling for long text */
     }
   </style>
 </head>
@@ -72,17 +78,7 @@
       dataContainer.innerHTML = '<h2>Data Retrieved:</h2>';
 
       // Handle different types of data (array, object, etc.)
-      if (Array.isArray(data)) {
-        const list = document.createElement('ul');
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.textContent = JSON.stringify(item, null, 2); // Format JSON for readability
-          list.appendChild(listItem);
-        });
-        dataContainer.appendChild(list);
-      } else {
-        dataContainer.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-      }
+      dataContainer.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
     }
 
     // Function to display an error in the UI
